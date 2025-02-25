@@ -34,4 +34,14 @@ public class ItemBOimpl implements ItemBO {
     public boolean saveItem(ItemDTO dto) throws ClassNotFoundException, SQLException {
         return itemDAO.save(new Item(dto.getItemId(), dto.getItemName(), dto.getQuantity(), dto.getPrice()));
     }
+
+    @Override
+    public boolean deleteItem(String id) throws ClassNotFoundException, SQLException {
+        return itemDAO.delete(id);
+    }
+
+    @Override
+    public String getNextItemId() throws ClassNotFoundException, SQLException {
+        return itemDAO.generateNewId();
+    }
 }

@@ -12,10 +12,29 @@ import java.util.ArrayList;
 
 public class ItemDAOimpl implements ItemDAO {
     @Override
+    public String generateNewId() throws SQLException, ClassNotFoundException {
+        String sql = "select item_id from item order by item_id desc limit 1";
+        ResultSet res = CrudUtil.execute(sql);
+        if (res.next()) {
+            String lastId = res.getString("item_id");
+            int i = Integer.parseInt(lastId.replaceAll("\\D", ""));
+            int newIdNumber = i + 1;
+            String newId = String.format("I%03d", newIdNumber);
+            return newId;
+        } else {
+            return  "I001";
+        }
+    }
+
+    @Override
+    public boolean delete(String id) throws SQLException, ClassNotFoundException {
+        return CrudUtil.execute(" delete from item where item_id = ?", id);
+    }
+
+    @Override
     public boolean save(Item dto) throws SQLException, ClassNotFoundException {
         return CrudUtil.execute("insert into item values(?,?,?,?)", dto.getItemId(), dto.getItemName(), dto.getQuantity(), dto.getPrice());
     }
-
     @Override
     public Item search(String id) throws SQLException, ClassNotFoundException {
         // Execute SQL query to find the item by ID
@@ -51,6 +70,7 @@ public class ItemDAOimpl implements ItemDAO {
         // Return the list of item IDs
         return itemIds;
     }
+
     @Override
     public boolean reduceQty(OrderDetailsDTO orderDetailsDTO) throws SQLException, ClassNotFoundException {
         return CrudUtil.execute(
@@ -75,15 +95,5 @@ public class ItemDAOimpl implements ItemDAO {
     @Override
     public boolean exist(String id) throws SQLException, ClassNotFoundException {
         return false;
-    }
-
-    @Override
-    public boolean delete(String id) throws SQLException, ClassNotFoundException {
-        return false;
-    }
-
-    @Override
-    public String generateNewId() throws SQLException, ClassNotFoundException {
-        return null;
     }
 }

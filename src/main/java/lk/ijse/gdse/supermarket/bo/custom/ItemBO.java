@@ -12,4 +12,6 @@ public interface ItemBO extends SuperBO {
     ItemDTO findById(String selectedItemId) throws SQLException, ClassNotFoundException;
     boolean reduceQty(OrderDetailsDTO orderDetailsDTO) throws SQLException, ClassNotFoundException;
     boolean saveItem(ItemDTO dto) throws ClassNotFoundException, SQLException;
+    boolean deleteItem(String id) throws ClassNotFoundException, SQLException;
+    String getNextItemId() throws ClassNotFoundException,SQLException;
 }

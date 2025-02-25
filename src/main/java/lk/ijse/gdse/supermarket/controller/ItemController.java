@@ -84,7 +84,7 @@ public class ItemController implements Initializable {
 
         try {
             refreshPage();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             new Alert(Alert.AlertType.ERROR, "Fail to load data!").show();
         }
     }
@@ -107,13 +107,12 @@ public class ItemController implements Initializable {
 //        tblItem.setItems(itemTMS);
     }
 
-    private void loadNextItemId() throws SQLException {
-//        String nextItemId = itemModel.getNextItemId();
-//        lblItemId.setText(nextItemId);
-
+    private void loadNextItemId() throws SQLException, ClassNotFoundException {
+        String nextItemId = itemBO.getNextItemId();
+        lblItemId.setText(nextItemId);
     }
 
-    private void refreshPage() throws SQLException {
+    private void refreshPage() throws SQLException, ClassNotFoundException {
         loadNextItemId();
         loadTableData();
         resetStyles();
@@ -182,7 +181,7 @@ public class ItemController implements Initializable {
     }
 
     @FXML
-    void btnDeleteItemOnAction(ActionEvent event) throws SQLException {
+    void btnDeleteItemOnAction(ActionEvent event) throws SQLException, ClassNotFoundException {
         String itemId = lblItemId.getText();
 
         if (itemId != null) {
@@ -191,20 +190,20 @@ public class ItemController implements Initializable {
             Optional<ButtonType> result = alert.showAndWait();
 
             if (result.isPresent() && result.get() == ButtonType.YES) {
-//                boolean isDeleted = itemModel.deleteItem(itemId);
-//
-//                if (isDeleted) {
-//                    new Alert(Alert.AlertType.INFORMATION, "Item deleted successfully!").show();
-//                    refreshPage();
-//                } else {
-//                    new Alert(Alert.AlertType.ERROR, "Failed to delete item!").show();
-//                }
+                boolean isDeleted = itemBO.deleteItem(itemId);
+
+                if (isDeleted) {
+                    new Alert(Alert.AlertType.INFORMATION, "Item deleted successfully!").show();
+                    refreshPage();
+                } else {
+                    new Alert(Alert.AlertType.ERROR, "Failed to delete item!").show();
+                }
             }
         }
     }
 
     @FXML
-    void btnResetOnAction(ActionEvent event) throws SQLException {
+    void btnResetOnAction(ActionEvent event) throws SQLException, ClassNotFoundException{
         refreshPage();
     }
 
