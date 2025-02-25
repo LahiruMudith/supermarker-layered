@@ -89,22 +89,22 @@ public class ItemController implements Initializable {
         }
     }
 
-    private void loadTableData() throws SQLException {
-//        ArrayList<ItemDTO> itemDTOS = itemModel.getAllItems();
-//        ObservableList<ItemTM> itemTMS = FXCollections.observableArrayList();
-//
-//        for (ItemDTO itemDTO : itemDTOS) {
-//            ItemTM itemTM = new ItemTM(
-//                    itemDTO.getItemId(),
-//                    itemDTO.getName(),
-//                    itemDTO.getQuantity(),
-//                    itemDTO.getPrice()
-//            );
-//
-//            itemTMS.add(itemTM);
-//        }
-//
-//        tblItem.setItems(itemTMS);
+    private void loadTableData() throws SQLException,ClassNotFoundException {
+        ArrayList<ItemDTO> itemDTOS = itemBO.getAllItems();
+        ObservableList<ItemTM> itemTMS = FXCollections.observableArrayList();
+
+        for (ItemDTO itemDTO : itemDTOS) {
+            ItemTM itemTM = new ItemTM(
+                    itemDTO.getItemId(),
+                    itemDTO.getItemName(),
+                    itemDTO.getQuantity(),
+                    itemDTO.getPrice()
+            );
+
+            itemTMS.add(itemTM);
+        }
+
+        tblItem.setItems(itemTMS);
     }
 
     private void loadNextItemId() throws SQLException, ClassNotFoundException {
@@ -208,7 +208,7 @@ public class ItemController implements Initializable {
     }
 
     @FXML
-    void btnUpdateItemOnAction(ActionEvent event) throws SQLException {
+    void btnUpdateItemOnAction(ActionEvent event) throws SQLException , ClassNotFoundException{
         String itemId = lblItemId.getText();
         String name = txtName.getText();
         String quantityString = txtQuantity.getText();
@@ -241,16 +241,16 @@ public class ItemController implements Initializable {
             int quantity = Integer.parseInt(quantityString);
             double price = Double.parseDouble(priceString);
 
-//            ItemDTO updatedItemDTO = new ItemDTO(itemId, name, quantity, price);
-//
-//            boolean isSaved = itemModel.updateItem(updatedItemDTO);
-//
-//            if (isSaved) {
-//                new Alert(Alert.AlertType.INFORMATION, "Item updated successfully!").show();
-//                refreshPage();
-//            } else {
-//                new Alert(Alert.AlertType.ERROR, "Fail to update item!").show();
-//            }
+            ItemDTO updatedItemDTO = new ItemDTO(itemId, name, quantity, price);
+
+            boolean isSaved = itemBO.updateItem(updatedItemDTO);
+
+            if (isSaved) {
+                new Alert(Alert.AlertType.INFORMATION, "Item updated successfully!").show();
+                refreshPage();
+            } else {
+                new Alert(Alert.AlertType.ERROR, "Fail to update item!").show();
+            }
         }
     }
 

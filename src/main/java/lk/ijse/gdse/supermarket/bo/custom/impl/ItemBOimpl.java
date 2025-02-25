@@ -44,4 +44,26 @@ public class ItemBOimpl implements ItemBO {
     public String getNextItemId() throws ClassNotFoundException, SQLException {
         return itemDAO.generateNewId();
     }
+
+    @Override
+    public ArrayList<ItemDTO> getAllItems() throws ClassNotFoundException, SQLException {
+        ArrayList<Item> items = itemDAO.getAll();
+        ArrayList<ItemDTO> itemDTOS = new ArrayList<>();
+        for(Item item : items){
+            ItemDTO itemDTO = new ItemDTO(
+                item.getItemId(),
+                item.getItemName(),
+                item.getQuantity(),
+                item.getPrice()
+            );
+
+            itemDTOS.add(itemDTO);
+        }
+        return itemDTOS;
+    }
+
+    @Override
+    public boolean updateItem(ItemDTO itemDTO) throws SQLException, ClassNotFoundException {
+        return itemDAO.update(new Item(itemDTO.getItemId(), itemDTO.getItemName(), itemDTO.getQuantity(), itemDTO.getPrice()));
+    }
 }

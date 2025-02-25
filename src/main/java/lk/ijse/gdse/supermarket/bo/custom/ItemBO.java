@@ -9,9 +9,17 @@ import java.util.ArrayList;
 
 public interface ItemBO extends SuperBO {
     ArrayList<String> getAllItemIds() throws SQLException, ClassNotFoundException;
+
     ItemDTO findById(String selectedItemId) throws SQLException, ClassNotFoundException;
+
     boolean reduceQty(OrderDetailsDTO orderDetailsDTO) throws SQLException, ClassNotFoundException;
+
     boolean saveItem(ItemDTO dto) throws ClassNotFoundException, SQLException;
+
     boolean deleteItem(String id) throws ClassNotFoundException, SQLException;
-    String getNextItemId() throws ClassNotFoundException,SQLException;
+
+    String getNextItemId() throws ClassNotFoundException, SQLException;
+
+    ArrayList<ItemDTO> getAllItems() throws ClassNotFoundException, SQLException;
+    boolean updateItem(ItemDTO itemDTO) throws SQLException, ClassNotFoundException;
 }

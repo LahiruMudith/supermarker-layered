@@ -12,6 +12,30 @@ import java.util.ArrayList;
 
 public class ItemDAOimpl implements ItemDAO {
     @Override
+    public boolean update(Item dto) throws SQLException, ClassNotFoundException {
+        String sql = "update item set name = ?, quantity= ?, price= ? where item_id = ?";
+        return CrudUtil.execute(sql, dto.getItemName(), dto.getQuantity(), dto.getPrice(), dto.getItemId());
+    }
+
+    @Override
+    public ArrayList<Item> getAll() throws SQLException, ClassNotFoundException {
+        String sql = "select * from item";
+        ResultSet res = CrudUtil.execute(sql);
+        ArrayList<Item> items = new ArrayList<>();
+        while (res.next()){
+            Item item = new Item(
+                    res.getString("item_id"),
+                    res.getString("name"),
+                    res.getInt("quantity"),
+                    res.getDouble("price")
+            );
+
+            items.add(item);
+        }
+        return items;
+    }
+
+    @Override
     public String generateNewId() throws SQLException, ClassNotFoundException {
         String sql = "select item_id from item order by item_id desc limit 1";
         ResultSet res = CrudUtil.execute(sql);
@@ -25,7 +49,6 @@ public class ItemDAOimpl implements ItemDAO {
             return  "I001";
         }
     }
-
     @Override
     public boolean delete(String id) throws SQLException, ClassNotFoundException {
         return CrudUtil.execute(" delete from item where item_id = ?", id);
@@ -35,6 +58,7 @@ public class ItemDAOimpl implements ItemDAO {
     public boolean save(Item dto) throws SQLException, ClassNotFoundException {
         return CrudUtil.execute("insert into item values(?,?,?,?)", dto.getItemId(), dto.getItemName(), dto.getQuantity(), dto.getPrice());
     }
+
     @Override
     public Item search(String id) throws SQLException, ClassNotFoundException {
         // Execute SQL query to find the item by ID
@@ -81,16 +105,6 @@ public class ItemDAOimpl implements ItemDAO {
     }
 
     //------------>
-
-    @Override
-    public ArrayList<Item> getAll() throws SQLException, ClassNotFoundException {
-        return null;
-    }
-
-    @Override
-    public boolean update(Item dto) throws SQLException, ClassNotFoundException {
-        return false;
-    }
 
     @Override
     public boolean exist(String id) throws SQLException, ClassNotFoundException {
