@@ -1,5 +1,7 @@
 package lk.ijse.gdse.supermarket.model;
 
+import lk.ijse.gdse.supermarket.bo.BOFactory;
+import lk.ijse.gdse.supermarket.bo.custom.ItemBO;
 import lk.ijse.gdse.supermarket.dto.OrderDetailsDTO;
 import lk.ijse.gdse.supermarket.util.CrudUtil;
 
@@ -19,18 +21,11 @@ import java.util.ArrayList;
 
 public class OrderDetailsModel {
 
+    //==============
+    private ItemBO itemBO = (ItemBO) BOFactory.getInstance().getBO(BOFactory.BOType.ITEM);
+    //==============
     // @itemModel: Reference to the ItemModel, used to update the item quantity after saving order details
-    private final ItemModel itemModel = new ItemModel();
-
-    /**
-     * @param orderDetailsDTOS: A list of OrderDetailsDTO objects representing the order details to be saved.
-     * @return boolean: Returns true if all order details are saved and item quantities are updated, otherwise false.
-     * @throws SQLException: If any SQL-related issues occur during the save or update process.
-     * @saveOrderDetailsList: Saves a list of order details and updates item quantities accordingly.
-     * This method iterates through the list of OrderDetailsDTO objects, saves each order detail,
-     * and reduces the item quantity in the stock for each item.
-     **/
-    public boolean saveOrderDetailsList(ArrayList<OrderDetailsDTO> orderDetailsDTOS) throws SQLException {
+    public boolean saveOrderDetailsList(ArrayList<OrderDetailsDTO> orderDetailsDTOS) throws SQLException, ClassNotFoundException {
         // Iterate through each order detail in the list
         for (OrderDetailsDTO orderDetailsDTO : orderDetailsDTOS) {
             // @isOrderDetailsSaved: Saves the individual order detail
@@ -41,7 +36,7 @@ public class OrderDetailsModel {
             }
 
             // @isItemUpdated: Updates the item quantity in the stock for the corresponding order detail
-            boolean isItemUpdated = itemModel.reduceQty(orderDetailsDTO);
+            boolean isItemUpdated = itemBO.reduceQty(orderDetailsDTO);
             if (!isItemUpdated) {
                 // Return false if updating the item quantity fails
                 return false;

@@ -26,10 +26,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import lk.ijse.gdse.supermarket.bo.BOFactory;
+import lk.ijse.gdse.supermarket.bo.custom.CustomerBO;
 import lk.ijse.gdse.supermarket.db.DBConnection;
 import lk.ijse.gdse.supermarket.dto.CustomerDTO;
 import lk.ijse.gdse.supermarket.dto.tm.CustomerTM;
-import lk.ijse.gdse.supermarket.model.CustomerModel;
 
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.view.JasperViewer;
@@ -96,8 +97,9 @@ public class CustomerController implements Initializable {
 
     @FXML
     private Button btnUpdate;
-
-    CustomerModel customerModel = new CustomerModel();
+    //===================
+    private CustomerBO customerBO = (CustomerBO) BOFactory.getInstance().getBO(BOFactory.BOType.CUSTOMER);
+    //===================
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -109,18 +111,15 @@ public class CustomerController implements Initializable {
 
         try {
             refreshPage();
-//            String nextCustomerID = customerModel.getNextCustomerID();
-//            System.out.println(nextCustomerID);
-//            lblCustomerId.setText(nextCustomerID);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void refreshPage() throws SQLException {
+    private void refreshPage() throws SQLException, ClassNotFoundException {
         refreshTable();
 
-        String nextCustomerID = customerModel.getNextCustomerId();
+        String nextCustomerID = customerBO.getNextCustomerId();
         lblCustomerId.setText(nextCustomerID);
 
         txtName.setText("");
@@ -136,8 +135,8 @@ public class CustomerController implements Initializable {
         btnOpenMailSendModel.setDisable(true);
     }
 
-    private void refreshTable() throws SQLException {
-        ArrayList<CustomerDTO> customerDTOS = customerModel.getAllCustomers();
+    private void refreshTable() throws SQLException, ClassNotFoundException {
+        ArrayList<CustomerDTO> customerDTOS = customerBO.getAllCustomers();
         ObservableList<CustomerTM> customerTMS = FXCollections.observableArrayList();
 
 //        ObservableList<CustomerTM> customerTMS = FXCollections.observableArrayList();
@@ -167,7 +166,7 @@ public class CustomerController implements Initializable {
     }
 
     @FXML
-    void btnSaveCustomerOnAction(ActionEvent event) throws SQLException {
+    void btnSaveCustomerOnAction(ActionEvent event) throws SQLException, ClassNotFoundException {
         String id = lblCustomerId.getText();
         String name = txtName.getText();
         String nic = txtNic.getText();
@@ -219,7 +218,7 @@ public class CustomerController implements Initializable {
         if (isValidName && isValidNic && isValidEmail && isValidPhone) {
             CustomerDTO customerDTO = new CustomerDTO(id, name, nic, email, phone);
 
-            boolean isSaved = customerModel.saveCustomer(customerDTO);
+            boolean isSaved = customerBO.saveCustomer(customerDTO);
 
             if (isSaved) {
                 new Alert(Alert.AlertType.INFORMATION, "Customer saved...!").show();
@@ -231,14 +230,14 @@ public class CustomerController implements Initializable {
     }
 
     @FXML
-    void btnDeleteOnAction(ActionEvent event) throws SQLException {
+    void btnDeleteOnAction(ActionEvent event) throws SQLException, ClassNotFoundException {
         String customerId = lblCustomerId.getText();
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this customer?", ButtonType.YES, ButtonType.NO);
         Optional<ButtonType> buttonType = alert.showAndWait();
         if (buttonType.get() == ButtonType.YES) {
 
-            boolean isDeleted = customerModel.deleteCustomer(customerId);
+            boolean isDeleted = customerBO.deleteCustomer(customerId);
 
             if (isDeleted) {
                 new Alert(Alert.AlertType.INFORMATION, "Customer deleted...!").show();
@@ -251,12 +250,12 @@ public class CustomerController implements Initializable {
     }
 
     @FXML
-    void btnResetOnAction(ActionEvent event) throws SQLException {
+    void btnResetOnAction(ActionEvent event) throws SQLException, ClassNotFoundException {
         refreshPage();
     }
 
     @FXML
-    void btnUpdateOnAction(ActionEvent event) throws SQLException {
+    void btnUpdateOnAction(ActionEvent event) throws SQLException, ClassNotFoundException {
         String id = lblCustomerId.getText();
         String name = txtName.getText();
         String nic = txtNic.getText();
@@ -300,7 +299,7 @@ public class CustomerController implements Initializable {
 
             CustomerDTO customerDTO = new CustomerDTO(id, name, nic, email, phone);
 
-            boolean isUpdate = customerModel.updateCustomer(customerDTO);
+            boolean isUpdate = customerBO.updateCustomer(customerDTO);
 
             if (isUpdate) {
                 new Alert(Alert.AlertType.INFORMATION, "Customer updated...!").show();
@@ -365,8 +364,6 @@ public class CustomerController implements Initializable {
                     connection
             );
 
-            // Display the report in a viewer (this is a built-in JasperReports viewer)
-            // 'false' indicates that the window should not close the entire application when closed
             JasperViewer.viewReport(jasperPrint, false);
         } catch (JRException e) {
             new Alert(Alert.AlertType.ERROR, "Fail to load report..!");

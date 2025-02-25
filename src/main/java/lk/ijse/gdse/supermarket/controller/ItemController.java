@@ -20,6 +20,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import lk.ijse.gdse.supermarket.bo.BOFactory;
+import lk.ijse.gdse.supermarket.bo.custom.ItemBO;
+import lk.ijse.gdse.supermarket.dto.ItemDTO;
 import lk.ijse.gdse.supermarket.dto.tm.ItemTM;
 
 import java.net.URL;
@@ -69,7 +72,8 @@ public class ItemController implements Initializable {
     @FXML
     private TextField txtQuantity;
 
-//    private final ItemModel itemModel = new ItemModel();
+    //===========
+    private ItemBO itemBO = (ItemBO) BOFactory.getInstance().getBO(BOFactory.BOType.ITEM);
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -130,8 +134,9 @@ public class ItemController implements Initializable {
         txtPrice.setStyle(txtPrice.getStyle() + "; -fx-border-color: #7367F0;");
     }
 
+    //DONE
     @FXML
-    void btnSaveItemOnAction(ActionEvent event) throws SQLException {
+    void btnSaveItemOnAction(ActionEvent event) throws SQLException, ClassNotFoundException {
         String itemId = lblItemId.getText();
         String name = txtName.getText();
         String quantityString = txtQuantity.getText();
@@ -143,9 +148,6 @@ public class ItemController implements Initializable {
         boolean isValidName = name != null;
         boolean isValidQuantity = quantityString.matches(quantityPattern);
         boolean isValidPrice = priceString.matches(pricePattern);
-
-        System.out.println(isValidQuantity + " / " + quantityString);
-
         resetStyles();
 
         if (!isValidName) {
@@ -166,16 +168,16 @@ public class ItemController implements Initializable {
             int quantity = Integer.parseInt(quantityString);
             double price = Double.parseDouble(priceString);
 
-//            ItemDTO itemDTO = new ItemDTO(itemId, name, quantity, price);
-//
-//            boolean isSaved = itemModel.saveItem(itemDTO);
-//
-//            if (isSaved) {
-//                new Alert(Alert.AlertType.INFORMATION, "Item saved successfully!").show();
-//                refreshPage();
-//            } else {
-//                new Alert(Alert.AlertType.ERROR, "Fail to save item!").show();
-//            }
+            ItemDTO itemDTO = new ItemDTO(itemId, name, quantity, price);
+
+            boolean isSaved = itemBO.saveItem(itemDTO);
+
+            if (isSaved) {
+                new Alert(Alert.AlertType.INFORMATION, "Item saved successfully!").show();
+                refreshPage();
+            } else {
+                new Alert(Alert.AlertType.ERROR, "Fail to save item!").show();
+            }
         }
     }
 

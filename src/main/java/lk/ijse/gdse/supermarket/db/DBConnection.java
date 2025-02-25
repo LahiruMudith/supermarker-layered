@@ -33,11 +33,6 @@ public class DBConnection {
     public static DBConnection getInstance() throws SQLException {
         return instance == null ? instance = new DBConnection() : instance;
     }
-
-    // Lombok usage
-//    public Connection getConnection(){
-//        return connection;
-//    }
 }
 
 
