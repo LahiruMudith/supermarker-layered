@@ -22,12 +22,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import lk.ijse.gdse.supermarket.bo.BOFactory;
 import lk.ijse.gdse.supermarket.bo.custom.CustomerBO;
 import lk.ijse.gdse.supermarket.bo.custom.ItemBO;
+import lk.ijse.gdse.supermarket.bo.custom.OrderDetailsBO;
+import lk.ijse.gdse.supermarket.bo.custom.OrdersBO;
 import lk.ijse.gdse.supermarket.dto.CustomerDTO;
 import lk.ijse.gdse.supermarket.dto.ItemDTO;
 import lk.ijse.gdse.supermarket.dto.OrderDTO;
 import lk.ijse.gdse.supermarket.dto.OrderDetailsDTO;
 import lk.ijse.gdse.supermarket.dto.tm.CartTM;
-import lk.ijse.gdse.supermarket.model.OrderModel;
 
 import java.net.URL;
 import java.sql.Date;
@@ -72,10 +73,8 @@ public class OrdersController implements Initializable {
     @FXML
     private TextField txtAddToCartQty;
 
-    // Models to manage data interactions with database or logic layers
-    private final OrderModel orderModel = new OrderModel();
-
     //===================
+    private OrdersBO ordersBO = (OrdersBO) BOFactory.getInstance().getBO(BOFactory.BOType.ORDERS);
     private ItemBO itemBO = (ItemBO) BOFactory.getInstance().getBO(BOFactory.BOType.ITEM);
     private CustomerBO customerBO = (CustomerBO) BOFactory.getInstance().getBO(BOFactory.BOType.CUSTOMER);
     //===================
@@ -116,7 +115,7 @@ public class OrdersController implements Initializable {
      */
     private void refreshPage() throws SQLException, ClassNotFoundException{
         // Get the next order ID and set it to the label
-        lblOrderId.setText(orderModel.getNextOrderId());
+        lblOrderId.setText(ordersBO.getNextOrderId());
 
         // Set the current date to the order date label
 //        orderDate.setText(String.valueOf(LocalDate.now()));
@@ -125,12 +124,6 @@ public class OrdersController implements Initializable {
         // Load customer and item IDs into ComboBoxes
         loadCustomerIds();
         loadItemId();
-
-//        ComboBox on action set
-//        cmbCustomerId.setOnAction(e->{
-//            String selectedCusId = cmbCustomerId.getSelectionModel().getSelectedItem();
-//            System.out.println(selectedCusId);
-//        });
 
         // Clear selected customer, item, and their associated labels
         cmbCustomerId.getSelectionModel().clearSelection();
@@ -261,11 +254,6 @@ public class OrdersController implements Initializable {
         cartTMS.add(newCartTM);
     }
 
-    /**
-     * This method handles placing the order.
-     * It collects cart data, creates an OrderDTO,
-     * and saves the order to the database using the OrderModel.
-     */
     @FXML
     void btnPlaceOrderOnAction(ActionEvent event) throws SQLException, ClassNotFoundException {
         if (tblCart.getItems().isEmpty()) {
@@ -307,7 +295,7 @@ public class OrdersController implements Initializable {
                 orderDetailsDTOS
         );
 
-        boolean isSaved = orderModel.saveOrder(orderDTO);
+        boolean isSaved = ordersBO.saveOrder(orderDTO);
 
         if (isSaved) {
             new Alert(Alert.AlertType.INFORMATION, "Order saved..!").show();
