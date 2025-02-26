@@ -8,6 +8,6 @@ import lk.ijse.gdse.supermarket.entity.Customer;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public interface CustomerDAO extends SuperDAO, CrudDAO<Customer> {
+public interface CustomerDAO extends CrudDAO<Customer> {
     ArrayList<String> getAllCustomerIds() throws SQLException, ClassNotFoundException;
 }

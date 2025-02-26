@@ -4,6 +4,7 @@ import lk.ijse.gdse.supermarket.bo.BOFactory;
 import lk.ijse.gdse.supermarket.bo.custom.ItemBO;
 import lk.ijse.gdse.supermarket.bo.custom.OrderDetailsBO;
 import lk.ijse.gdse.supermarket.dao.DAOFactory;
+import lk.ijse.gdse.supermarket.dao.custom.ItemDAO;
 import lk.ijse.gdse.supermarket.dao.custom.OrderDetailsDAO;
 import lk.ijse.gdse.supermarket.dao.custom.OrdersDAO;
 import lk.ijse.gdse.supermarket.dto.OrderDetailsDTO;
@@ -13,7 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class OrderDetailsBOimpl implements OrderDetailsBO {
-    private ItemBO itemBO = (ItemBO) BOFactory.getInstance().getBO(BOFactory.BOType.ITEM);
+    private ItemDAO itemDAO = (ItemDAO) DAOFactory.getInstance().getDAO(DAOFactory.getDAOType.ITEM);
     private OrderDetailsDAO orderDetailsDAO = (OrderDetailsDAO) DAOFactory.getInstance().getDAO(DAOFactory.getDAOType.ORDERDETAIL);
     @Override
     public boolean saveOrderDetailsList(ArrayList<OrderDetailsDTO> orderDetailsDTOS) throws SQLException, ClassNotFoundException {
@@ -26,7 +27,12 @@ public class OrderDetailsBOimpl implements OrderDetailsBO {
             }
 
             // @isItemUpdated: Updates the item quantity in the stock for the corresponding order detail
-            boolean isItemUpdated = itemBO.reduceQty(dto);
+            boolean isItemUpdated = itemDAO.reduceQty(new OrderDetails(
+                    dto.getOrderId(),
+                    dto.getItemId(),
+                    dto.getQuantity(),
+                    dto.getPrice()
+            ));
             if (!isItemUpdated) {
                 // Return false if updating the item quantity fails
                 return false;

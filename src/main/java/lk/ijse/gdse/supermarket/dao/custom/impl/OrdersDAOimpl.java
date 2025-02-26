@@ -30,7 +30,11 @@ public class OrdersDAOimpl implements OrdersDAO {
 
     @Override
     public boolean save(Order dto) throws SQLException, ClassNotFoundException {
-        return false;
+        System.out.println("Come ordersDAOimpl");
+        return CrudUtil.execute("insert into orders values (?,?,?)",
+                dto.getOrderId(),
+                dto.getCustomerId(),
+                dto.getOrderDate());
     }
 
     @Override
