@@ -6,6 +6,7 @@ import lk.ijse.gdse.supermarket.dao.custom.ItemDAO;
 import lk.ijse.gdse.supermarket.dto.ItemDTO;
 import lk.ijse.gdse.supermarket.dto.OrderDetailsDTO;
 import lk.ijse.gdse.supermarket.entity.Item;
+import lk.ijse.gdse.supermarket.entity.OrderDetails;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -27,7 +28,12 @@ public class ItemBOimpl implements ItemBO {
 
     @Override
     public boolean reduceQty(OrderDetailsDTO orderDetailsDTO) throws SQLException, ClassNotFoundException {
-        return itemDAO.reduceQty(orderDetailsDTO);
+        return itemDAO.reduceQty(new OrderDetails(
+                orderDetailsDTO.getOrderId(),
+                orderDetailsDTO.getItemId(),
+                orderDetailsDTO.getQuantity(),
+                orderDetailsDTO.getPrice()
+        ));
     }
 
     @Override

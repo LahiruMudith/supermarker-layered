@@ -4,17 +4,21 @@ import lk.ijse.gdse.supermarket.bo.BOFactory;
 import lk.ijse.gdse.supermarket.bo.custom.OrderDetailsBO;
 import lk.ijse.gdse.supermarket.bo.custom.OrdersBO;
 import lk.ijse.gdse.supermarket.dao.DAOFactory;
+import lk.ijse.gdse.supermarket.dao.custom.OrderDetailsDAO;
 import lk.ijse.gdse.supermarket.dao.custom.OrdersDAO;
 import lk.ijse.gdse.supermarket.db.DBConnection;
 import lk.ijse.gdse.supermarket.dto.OrderDTO;
+import lk.ijse.gdse.supermarket.dto.OrderDetailsDTO;
+import lk.ijse.gdse.supermarket.entity.Order;
+import lk.ijse.gdse.supermarket.entity.OrderDetails;
 import lk.ijse.gdse.supermarket.util.CrudUtil;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class OrdersBOimpl implements OrdersBO {
-    private OrderDetailsBO orderDetailsBO = (OrderDetailsBO) BOFactory.getInstance().getBO(BOFactory.BOType.ORDERDETAIL);
     private OrdersDAO ordersDAO = (OrdersDAO) DAOFactory.getInstance().getDAO(DAOFactory.getDAOType.ORDERS);
+    private OrderDetailsDAO orderDetailsDAO = (OrderDetailsDAO) DAOFactory.getInstance().getDAO(DAOFactory.getDAOType.ORDERDETAIL);
     @Override
     public String getNextOrderId() throws ClassNotFoundException, SQLException {
         return ordersDAO.generateNewId();
@@ -26,20 +30,29 @@ public class OrdersBOimpl implements OrdersBO {
         try {
             connection.setAutoCommit(false); // 1
 
-            boolean isOrderSaved = CrudUtil.execute(
-                    "insert into orders values (?,?,?)",
+            boolean isOrderSaved = ordersDAO.save(new Order(
                     orderDTO.getOrderId(),
                     orderDTO.getCustomerId(),
                     orderDTO.getOrderDate()
-            );
+            ));
+            System.out.println("isOrderSaved: " + isOrderSaved);
             // If the order is saved successfully
-            if (isOrderSaved) {
-                boolean isOrderDetailListSaved = orderDetailsBO.saveOrderDetailsList(orderDTO.getOrderDetailsDTOS());
-                if (isOrderDetailListSaved) {
-                    connection.commit(); // 2
-                    return true;
+            for (OrderDetailsDTO orderDetailsDTO : orderDTO.getOrderDetailsDTOS()){
+                if (isOrderSaved) {
+                    boolean isOrderDetailListSaved = orderDetailsDAO.save(new OrderDetails(
+                            orderDetailsDTO.getOrderId(),
+                            orderDetailsDTO.getItemId(),
+                            orderDetailsDTO.getQuantity(),
+                            orderDetailsDTO.getPrice()
+                    ));
+                    if (isOrderDetailListSaved) {
+                        connection.commit(); // 2
+                        return true;
+                    }
+                    System.out.println("isOrderDetailSaved: " + isOrderSaved);
                 }
             }
+
             connection.rollback(); // 3
             return false;
         } catch (Exception e) {

@@ -1,9 +1,8 @@
 package lk.ijse.gdse.supermarket.dao.custom.impl;
 
 import lk.ijse.gdse.supermarket.dao.custom.ItemDAO;
-import lk.ijse.gdse.supermarket.dto.ItemDTO;
-import lk.ijse.gdse.supermarket.dto.OrderDetailsDTO;
 import lk.ijse.gdse.supermarket.entity.Item;
+import lk.ijse.gdse.supermarket.entity.OrderDetails;
 import lk.ijse.gdse.supermarket.util.CrudUtil;
 
 import java.sql.ResultSet;
@@ -96,11 +95,11 @@ public class ItemDAOimpl implements ItemDAO {
     }
 
     @Override
-    public boolean reduceQty(OrderDetailsDTO orderDetailsDTO) throws SQLException, ClassNotFoundException {
+    public boolean reduceQty(OrderDetails entity) throws SQLException, ClassNotFoundException {
         return CrudUtil.execute(
                 "update item set quantity = quantity - ? where item_id = ?",
-                orderDetailsDTO.getQuantity(),   // Quantity to reduce
-                orderDetailsDTO.getItemId()      // Item ID
+                entity.getQuantity(),   // Quantity to reduce
+                entity.getItemId()      // Item ID
         );
     }
 
