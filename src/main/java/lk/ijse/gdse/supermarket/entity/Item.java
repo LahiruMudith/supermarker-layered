@@ -2,6 +2,8 @@ package lk.ijse.gdse.supermarket.entity;
 
 import lombok.*;
 
+import java.math.BigDecimal;
+
 /**
  * --------------------------------------------
  * Author: R.I.B. Shamodha Sahan Rathnamalala
@@ -22,5 +24,5 @@ public class Item {
     private String itemId;
     private String itemName;
     private int quantity;
-    private double price;
+    private BigDecimal price;
 }

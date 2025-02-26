@@ -25,6 +25,7 @@ import lk.ijse.gdse.supermarket.bo.custom.ItemBO;
 import lk.ijse.gdse.supermarket.dto.ItemDTO;
 import lk.ijse.gdse.supermarket.dto.tm.ItemTM;
 
+import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -165,7 +166,7 @@ public class ItemController implements Initializable {
             resetStyles();
 
             int quantity = Integer.parseInt(quantityString);
-            double price = Double.parseDouble(priceString);
+            BigDecimal price = new BigDecimal(priceString);
 
             ItemDTO itemDTO = new ItemDTO(itemId, name, quantity, price);
 
@@ -239,7 +240,7 @@ public class ItemController implements Initializable {
             resetStyles();
 
             int quantity = Integer.parseInt(quantityString);
-            double price = Double.parseDouble(priceString);
+            BigDecimal price = new BigDecimal(priceString);
 
             ItemDTO updatedItemDTO = new ItemDTO(itemId, name, quantity, price);
 
