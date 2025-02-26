@@ -26,7 +26,7 @@ public class ItemDAOimpl implements ItemDAO {
                     res.getString("item_id"),
                     res.getString("name"),
                     res.getInt("quantity"),
-                    res.getDouble("price")
+                    res.getBigDecimal("price")
             );
 
             items.add(item);
@@ -69,7 +69,7 @@ public class ItemDAOimpl implements ItemDAO {
                     rst.getString(1),  // Item ID
                     rst.getString(2),  // Item Name
                     rst.getInt(3),     // Item Quantity
-                    rst.getDouble(4)   // Item Price
+                    rst.getBigDecimal(4)   // Item Price
             );
         }
 
